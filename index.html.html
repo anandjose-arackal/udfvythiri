@@ -1,201 +1,192 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EVM — Buzzer on Row Button</title>
+<style>
+  :root{
+    --pill1:#6f6f6f;
+    --pill2:#ffd8ea;
+    --pill3:#d9e9fb;
+    --led-off:#cfcfcf;
+    --led-on:#17b84a;
+    --blue-btn:#0b4a85;
+    --maroon-dot:#8a1c1c;
+  }
 
-  <style>
-    /* A4 page */
-    .page {
-      width: 210mm;
-      height: 297mm;
-      margin: 0;
-      /*padding: 8mm 10mm;*/
-      box-sizing: border-box;
-      position: relative;
-    }
+  body{
+    font-family: "Segoe UI", sans-serif;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    padding:30px 10px;
+  }
 
-    /* 7mm space after the slip container */
-    .slip-wrapper {
-      margin-bottom: 7mm;
-    }
+  .container{ width:360px; max-width:95vw; }
 
-    /**************************************************************
-     * SLIP = TABLE (wkhtmltopdf safe)
-     **************************************************************/
-    .slip {
-      display: table;
-      table-layout: fixed;
-      width: 100%;
-      height: calc((297mm - 16mm - (5 * 7mm)) / 6); /* slip height unchanged */
-      border: 2px solid #000;
-      box-sizing: border-box;
-      margin-bottom: 0;
-      overflow: hidden;
-      position: relative;
-    }
+  .pills{ display:flex; gap:14px; justify-content:center; margin-bottom:22px; }
+  .pill{ padding:12px 26px; border-radius:50px; font-weight:700; cursor:pointer; user-select:none; box-shadow:0 6px 12px rgba(0,0,0,0.08);}
+  .ward{ background:var(--pill1); color:#fff; } .block{ background:var(--pill2); color:#fff; } .district{ background:var(--pill3); color:#333; }
 
-    /**************************************************************
-     * LEFT COLUMN (serial number)
-     **************************************************************/
-    .serial-box {
-      display: table-cell;
-      vertical-align: middle;
-      width: 22%;
-      min-width: 90px;
-      border-right: 2px solid #000;
-      text-align: center;
-      font-size: 60px;     /* slightly reduced */
-      line-height: 0.9;
-      padding: 0 4px;      /* compact */
-      box-sizing: border-box;
-    }
+  .card{ background:#fff; border-radius:20px; padding:12px; box-shadow:0 10px 20px rgba(0,0,0,0.06); border:6px solid #e5e5e5; }
 
-    /**************************************************************
-     * RIGHT COLUMN
-     **************************************************************/
-    .right {
-      display: table-cell;
-      vertical-align: top;
-      width: 78%;
-      padding: 4px 8px;   /* compact */
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-    }
+  .header{ background:#f1f1f1; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .status{ display:flex; gap:8px; font-weight:800; font-size:18px; }
+  .status-dot{ width:12px; height:12px; background:#2fc24c; border-radius:50%; }
 
-    /**************************************************************
-     * HEADER
-     **************************************************************/
-    .header-wrap {
-      height: 36px;              /* reduced */
-      display: flex;
-      align-items: flex-end;
-     /* padding-bottom: 2px;        /* reduced */
-      box-sizing: border-box;
-    }
+  .grid{ border:1px solid #e1e1e1; border-radius:10px; overflow:hidden; }
+  .row{ display:grid; grid-template-columns:40px 1fr 30px 70px; padding:12px 8px; align-items:center; border-bottom:1px solid #e1e1e1; transition:background .12s;}
+  .row:last-child{ border-bottom:none; }
+  .serial{ text-align:center; font-weight:700; color:#666; }
+  .candidate{ font-weight:600; color:#222; font-size:15px; padding-left:6px; }
 
-    .header {
-      width: 100%;
-      text-align: center;
-      font-size: 20px;            /* reduced */
-      margin: 0;
-      /*padding-bottom: 2px;        /* reduced */
-      border-bottom: 2px solid #000;
-      line-height: 1;
-      box-sizing: border-box;
-    }
+  .vote{ display:flex; gap:10px; align-items:center; justify-content:flex-end; }
+  .dot{ width:18px; height:18px; border-radius:50%; background:var(--maroon-dot); transition:transform .12s, box-shadow .12s; }
+  .dot.selected{ transform:scale(1.12); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
 
-    /**************************************************************
-     * MIDDLE CONTENT
-     **************************************************************/
-    .middle {
-      flex: 1 1 auto;
-      padding-top: 4px;           /* compact */
-      box-sizing: border-box;
-      display: block;
-      overflow: hidden;
-    }
+  .btn{ width:58px; height:34px; background:var(--blue-btn); border-radius:16px; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer; display:inline-block; }
 
-    .field {
-      width: 100%;
-      display: table;
-      table-layout: fixed;
-      margin-bottom: 3px;         /* compact */
-      box-sizing: border-box;
-    }
+  .led-area{ display:flex; justify-content:flex-end; gap:12px; padding:12px; }
+  #led{ width:20px; height:20px; border-radius:50%; background:var(--led-off); transition:.25s; }
+  #led.on{ background:var(--led-on); box-shadow:0 0 20px var(--led-on); }
 
-    .label {
-      display: table-cell;
-      width: 110px;               /* narrower */
-      vertical-align: top;
-      padding-right: 4px;         /* compact */
-      white-space: nowrap;
-      font-weight: 600;
-      font-size: 12px;
-      box-sizing: border-box;
-    }
-
-    .value {
-      display: table-cell;
-      vertical-align: top;
-      word-break: break-word;
-      white-space: normal;
-      font-size: 12.5px;
-      box-sizing: border-box;
-    }
-
-    /**************************************************************
-     * FOOTER
-     **************************************************************/
-    .footer-wrap {
-      flex: 0 0 auto;
-      margin-top: 4px;            /* compact */
-      box-sizing: border-box;
-    }
-
-    .polling {
-      border-top: 2px solid #000;
-      padding-top: 4px;           /* compact */
-      font-size: 11px;
-      text-align: left;
-      /*margin-bottom: 3px;         /* compact */
-    }
-
-
-    .page { page-break-after: always; }
-
-  </style>
+  /* mobile tap feedback */
+  .btn:active{ transform:translateY(1px) scale(.997); }
+</style>
 </head>
-
 <body>
-  <div class="page">
-    <% slips.each do |s| %>
-      <div class="slip-wrapper">
-        <div class="slip">
+<div class="container">
 
-          <!-- LEFT SERIAL COLUMN -->
-          <div class="serial-box"><%= s[:serial] %></div>
-
-          <!-- RIGHT SECTION -->
-          <div class="right">
-
-            <!-- HEADER -->
-            <div class="header-wrap">
-              <div class="header">വാർഡ്: 012 - പഴയവൈത്തിരി </div>
-            </div>
-
-            <!-- MAIN CONTENT -->
-            <div class="middle">
-              <div class="field">
-                <div class="label">കാർഡ് നമ്പർ</div>
-                <div class="value"><%= s[:card] %></div>
-              </div>
-
-              <div class="field">
-                <div class="label">പേർ</div>
-                <div class="value"><%= s[:name] %></div>
-              </div>
-
-              <div class="field">
-                <div class="label">വീട്ടു പേര്</div>
-                <div class="value"><%= s[:house] %></div>
-              </div>
-
-              <div class="field">
-                <div class="label">രക്ഷിതാവ്</div>
-                <div class="value"><%= s[:guardian] %></div>
-              </div>
-            </div>
-
-            <!-- FOOTER -->
-            <div class="footer-wrap">
-              <div class="polling">POLLING STATION: 01-കൃഷി ഭവൻ പഴയവൈത്തിരി </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    <% end %>
+  <div class="pills">
+    <div class="pill ward">Ward</div>
+    <div class="pill block" id="blockBtn">Block</div>
+    <div class="pill district">District</div>
   </div>
+
+  <div class="card">
+    <div class="header">
+      <div class="status">Ready <span class="status-dot" aria-hidden="true"></span></div>
+      <div style="font-size:19px; font-weight:700;">Ballot Unit 1</div>
+    </div>
+
+    <div class="grid" id="rows"></div>
+
+    <div class="led-area">
+      <div id="led" aria-live="polite" aria-atomic="true" title="Indicator LED"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // create rows
+  const rowsEl = document.getElementById('rows');
+  for(let i=1;i<=10;i++){
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.dataset.index = i;
+    row.innerHTML = `
+      <div class="serial">${i}</div>
+      <div class="candidate">${i===2 ? "ആർ രാമചന്ദ്രൻ " : ""}</div>
+      <div class="icon">${i===2 ? "✋" : ""}</div>
+      <div class="vote"><div class="dot" aria-hidden="true"></div><div class="btn" role="button" tabindex="0" aria-label="Vote for row ${i}"></div></div>
+    `;
+    rowsEl.appendChild(row);
+  }
+
+  const led = document.getElementById('led');
+  const blockPill = document.getElementById('blockBtn');
+
+  // Audio helper - returns a function that will play a short buzzer
+  function playBuzzerFor(ms = 450) {
+    // return a no-op if AudioContext not available
+    if(!(window.AudioContext || window.webkitAudioContext)) return () => {};
+    return function() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        // buzzer-ish: start lower, glide upward for the classic "buzz"
+        o.type = 'square';
+        const now = ctx.currentTime;
+        o.frequency.setValueAtTime(420, now);
+        o.frequency.exponentialRampToValueAtTime(880, now + ms/2000);
+
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.linearRampToValueAtTime(0.16, now + 0.02); // quick attack
+        g.gain.exponentialRampToValueAtTime(0.001, now + ms/1000); // decay
+
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now);
+
+        // stop & cleanup
+        setTimeout(()=> {
+          try { o.stop(); } catch(e){}
+          try { ctx.close(); } catch(e){}
+        }, ms + 20);
+      } catch(e){
+        // silent fail if browser blocks audio
+        console.warn('Audio failed', e);
+      }
+    };
+  }
+
+  const playBuzzer = playBuzzerFor(600);
+
+  // illuminate LED for ms milliseconds
+  function flashLed(ms = 900) {
+    led.classList.add('on');
+    led.setAttribute('aria-label', 'LED ON');
+    setTimeout(()=> {
+      led.classList.remove('on');
+      led.setAttribute('aria-label', 'LED OFF');
+    }, ms);
+  }
+
+  // when a row's blue button is clicked/tapped/activated, play buzzer & flash LED
+  rowsEl.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.btn');
+    if(!btn) return;
+    const row = btn.closest('.row');
+    if(!row) return;
+
+    // mark dot as selected
+    const dot = row.querySelector('.dot');
+    dot.classList.add('selected');
+
+    // short debounce/visual feedback
+    setTimeout(()=> dot.classList.remove('selected'), 1000);
+
+    // play buzzer + led
+    playBuzzer();
+    flashLed(1000);
+  }, false);
+
+  // support keyboard activation (Enter/Space) on btns
+  rowsEl.addEventListener('keydown', (ev) => {
+    if(ev.key !== 'Enter' && ev.key !== ' ') return;
+    const btn = ev.target.closest('.btn');
+    if(!btn) return;
+    ev.preventDefault();
+    btn.click();
+  });
+
+  // also keep the original Block pill behavior (optional)
+  blockPill.addEventListener('click', ()=> {
+    flashLed(900);
+    playBuzzer();
+  });
+
+  // Touch devices: ensure touchstart triggers immediate feedback (some browsers delay clicks)
+  rowsEl.addEventListener('touchstart', (ev) => {
+    const btn = ev.target.closest('.btn');
+    if(!btn) return;
+    // visual feedback only; actual action handled by click which usually follows touch
+    btn.style.transform = 'translateY(1px) scale(.998)';
+    setTimeout(()=> btn.style.transform = '', 120);
+  }, {passive:true});
+</script>
 </body>
 </html>
