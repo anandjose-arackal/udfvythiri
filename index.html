@@ -3,228 +3,171 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>EVM — Buzzer on Row Button</title>
-
+<title>TEAD UDF VYTHIRI — EVM demos</title>
 <style>
   :root{
-    --pill1:#6f6f6f;
-    --pill2:#ffd8ea;
-    --pill3:#d9e9fb;
-    --led-off:#cfcfcf;
-    --led-on:#17b84a;
-    --blue-btn:#0b4a85;
-    --maroon-dot:#8a1c1c;
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --accent:#0b4a85;
+    --muted:#6b7280;
+    --link-bg:#eef6ff;
   }
 
   body{
-    font-family: "Segoe UI", sans-serif;
-    background:#f5f5f5;
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:#111827;
     display:flex;
+    align-items:flex-start;
     justify-content:center;
-    padding:30px 10px;
+    padding:40px 16px;
   }
 
-  .container{ width:360px; max-width:95vw; }
+  .wrap{
+    width:100%;
+    max-width:980px;
+  }
 
-  .pills{ display:flex; gap:14px; justify-content:center; margin-bottom:22px; }
-  .pill{ padding:12px 26px; border-radius:50px; font-weight:700; cursor:pointer; user-select:none; box-shadow:0 6px 12px rgba(0,0,0,0.08);}
-  .ward{ background:var(--pill1); color:#fff; }
-  .block{ background:var(--pill2); color:#fff; }
-  .district{ background:var(--pill3); color:#333; }
+  /* UPDATED HEADER WITH LIGHT TRICOLOR GRADIENT */
+  header{
+    background: linear-gradient(
+      180deg,
+      rgba(255,153,51,0.18) 0%,   /* saffron */
+      rgba(255,255,255,0.65) 50%, /* white */
+      rgba(19,136,8,0.18) 100%    /* green */
+    );
+    border-radius:14px;
+    padding:32px 20px;
+    box-shadow:0 8px 30px rgba(15,23,42,0.06);
+    margin-bottom:22px;
+    text-align:center;   /* CENTER HEADING */
+  }
+
+  /* CENTERED, BOLD HEADING */
+  h1{
+    margin:0 0 6px 0;
+    font-size:28px;
+    color:var(--accent);
+    font-weight:800;     /* BOLD */
+    letter-spacing:0.6px;
+  }
+
+  p.lead{
+    margin:0;
+    color:var(--muted);
+    font-weight:600;
+    font-size:16px;
+  }
+
+  /* Layout */
+  main{
+    margin-top:8px;
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:18px;
+  }
 
   .card{
-    background:#fff;
-    border-radius:20px;
-    padding:12px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.06);
-    border:6px solid #e5e5e5;
+    background:var(--card);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 6px 20px rgba(15,23,42,0.04);
   }
 
-  .header{
-    background:#f1f1f1;
-    border-radius:10px;
-    padding:14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:8px;
-  }
-
-  .status{ display:flex; gap:8px; font-weight:800; font-size:18px; }
-  .status-dot{ width:12px; height:12px; background:#2fc24c; border-radius:50%; }
-
-  .grid{
-    border:1px solid #e1e1e1;
-    border-radius:10px;
-    overflow:hidden;
-  }
-
-  .row{
+  /* Links list */
+  .links{
     display:grid;
-    grid-template-columns:40px 1fr 30px 70px;
-    padding:12px 8px;
-    align-items:center;
-    border-bottom:1px solid #e1e1e1;
-  }
-  .row:last-child{ border-bottom:none; }
-
-  .serial{ text-align:center; font-weight:700; color:#666; }
-  .candidate{ font-weight:600; color:#222; font-size:15px; padding-left:6px; }
-
-  .vote{
-    display:flex;
+    grid-template-columns:repeat(3, minmax(0,1fr));
     gap:10px;
-    align-items:center;
-    justify-content:flex-end;
+    list-style:none;
+    padding:0;
+    margin:0;
   }
 
-  .dot{
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    background:var(--maroon-dot);
+  .links a{
+    display:block;
+    text-decoration:none;
+    background:var(--link-bg);
+    color:var(--accent);
+    padding:10px 12px;
+    border-radius:8px;
+    font-weight:700;
+    text-align:center;
+    box-shadow:inset 0 -1px 0 rgba(11,74,133,0.03);
     transition:transform .12s, box-shadow .12s;
   }
-
-  .dot.selected{
-    transform:scale(1.12);
-    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  .links a:hover{
+    transform:translateY(-4px);
+    box-shadow:0 8px 20px rgba(11,74,133,0.06);
   }
 
-  .btn{
-    width:58px;
-    height:34px;
-    background:var(--blue-btn);
-    border-radius:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    cursor:pointer;
-    display:inline-block;
+  .info{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.45;
   }
 
-  /* ICON IMAGE FIXED SIZE — requested 28px */
-  .c-icon{
-    width:28px;
-    height:28px;
-    object-fit:contain;
-    display:block;
+  footer{
+    margin-top:18px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
   }
 
-  .led-area{
-    display:flex;
-    justify-content:flex-end;
-    gap:12px;
-    padding:12px;
+  /* Responsive */
+  @media (max-width:880px){
+    main{ grid-template-columns:1fr; }
+    .links{ grid-template-columns:repeat(2, 1fr); }
   }
-
-  #led{
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    background:var(--led-off);
-    transition:.25s;
-  }
-
-  #led.on{
-    background:var(--led-on);
-    box-shadow:0 0 20px var(--led-on);
-  }
-
-  .btn:active{
-    transform:translateY(1px) scale(.997);
+  @media (max-width:420px){
+    .links{ grid-template-columns:1fr; }
   }
 </style>
 </head>
-
 <body>
-<div class="container">
+  <div class="wrap">
 
-  <div class="pills">
-    <div class="pill ward">Ward</div>
-    <div class="pill block" id="blockBtn">Block</div>
-    <div class="pill district">District</div>
-  </div>
+    <!-- UPDATED HEADER -->
+    <header>
+      <h1>TEAD UDF VYTHIRI</h1>
+      <p class="lead">EVM demo</p>
+    </header>
 
-  <div class="card">
-    <div class="header">
-      <div class="status">Ready <span class="status-dot"></span></div>
-      <div style="font-size:19px; font-weight:700;">Ballot Unit 1</div>
-    </div>
+    <main>
+      <div class="card">
+        <h3 style="margin-top:0;margin-bottom:12px;color:#0b4a85;">Available EVM demo pages</h3>
 
-    <div class="grid" id="rows"></div>
+        <ul class="links" aria-label="EVM demo links">
+          <li><a href="ward1.html"  target="_blank">Ward 1</a></li>
+          <li><a href="ward2.html"  target="_blank">Ward 2</a></li>
+          <li><a href="ward3.html"  target="_blank">Ward 3</a></li>
+          <li><a href="ward4.html"  target="_blank">Ward 4</a></li>
+          <li><a href="ward5.html"  target="_blank">Ward 5</a></li>
+          <li><a href="ward6.html"  target="_blank">Ward 6</a></li>
+          <li><a href="ward7.html"  target="_blank">Ward 7</a></li>
+          <li><a href="ward8.html"  target="_blank">Ward 8</a></li>
+          <li><a href="ward9.html"  target="_blank">Ward 9</a></li>
+          <li><a href="ward10.html" target="_blank">Ward 10</a></li>
+          <li><a href="ward11.html" target="_blank">Ward 11</a></li>
+          <li><a href="ward12.html" target="_blank">Ward 12</a></li>
+          <li><a href="ward13.html" target="_blank">Ward 13</a></li>
+          <li><a href="ward14.html" target="_blank">Ward 14</a></li>
+          <li><a href="ward15.html" target="_blank">Ward 15</a></li>
+        </ul>
 
-    <div class="led-area">
-      <div id="led"></div>
-    </div>
-  </div>
-
-</div>
-
-<script>
-  const rowsEl = document.getElementById('rows');
-
-  // Build 10 rows
-  for(let i=1; i<=10; i++){
-    const row = document.createElement('div');
-    row.className = 'row';
-
-    row.innerHTML = `
-      <div class="serial">${i}</div>
-      <div class="candidate">${i===2 ? "ആർ രാമചന്ദ്രൻ " : ""}</div>
-
-      <div class="icon">
-        ${i===2 ? '<img src="udf_symbol-min.png" class="c-icon" width="28" height="28" alt="symbol">' : ''}
+        <footer>
+          <div style="margin-top:12px;">
+            Ensure <code>ward1.html</code> to <code>ward15.html</code> exist in your repo.
+          </div>
+        </footer>
       </div>
 
-      <div class="vote">
-        <div class="dot"></div>
-        <div class="btn" role="button" tabindex="0"></div>
-      </div>
-    `;
-
-    rowsEl.appendChild(row);
-  }
-
-  const led = document.getElementById('led');
-
-  // Simple buzzer
-  function playBuzzer(){
-    try{
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = "square";
-      osc.frequency.value = 500;
-      gain.gain.value = 0.15;
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start();
-      setTimeout(()=>{ osc.stop(); ctx.close(); }, 300);
-    }catch(e){}
-  }
-
-  function flashLed(ms = 900){
-    led.classList.add('on');
-    setTimeout(()=> led.classList.remove('on'), ms);
-  }
-
-  // Pressing blue button triggers buzzer + LED
-  rowsEl.addEventListener('click',(ev)=>{
-    const btn = ev.target.closest('.btn');
-    if(!btn) return;
-
-    const row = btn.closest('.row');
-    const dot = row.querySelector('.dot');
-
-    dot.classList.add('selected');
-    setTimeout(()=> dot.classList.remove('selected'), 900);
-
-    playBuzzer();
-    flashLed();
-  });
-</script>
-
+      <aside class="card info">
+        <h4 style="margin-top:0;margin-bottom:10px;color:#0b4a85;">മാറാൻ കൊതിച്ഛ് വൈത്തിരി, മാറ്റാൻ ഉറച്ചു യുഡിഫ് </h4>
+        <p>   </p>
+      </aside>
+    </main>
+  </div>
 </body>
 </html>
