@@ -89,7 +89,10 @@
     row.innerHTML = `
       <div class="serial">${i}</div>
       <div class="candidate">${i===2 ? "ആർ രാമചന്ദ്രൻ " : ""}</div>
-      <div class="icon">${i===2 ? "✋" : ""}</div>
+       <!-- ICON CELL -->
+      <div class="icon">
+        ${i===2 ? '<img src="udf_symbol.png" class="c-icon" alt="symbol">' : ''}
+      </div>
       <div class="vote"><div class="dot" aria-hidden="true"></div><div class="btn" role="button" tabindex="0" aria-label="Vote for row ${i}"></div></div>
     `;
     rowsEl.appendChild(row);
@@ -190,4 +193,5 @@
 </script>
 </body>
 </html>
+
 
