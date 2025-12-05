@@ -221,10 +221,12 @@ const tabSelection = { ward:null };
 function buildGrid() {
   const el = document.getElementById("grid-ward");
   el.innerHTML = "";
-  const name = "ചന്ദ്രിക കൃഷ്ണൻ";
 
-  for (let i=1;i<=10;i++){
-    const special = i===1;
+  const name = "ചന്ദ്രിക കൃഷ്ണൻ";        // candidate label
+  const specialRow = 2;               // <<< MOVED TO SECOND POSITION
+
+  for (let i = 1; i <= 10; i++) {
+    const special = i === specialRow;
     const icon = special ? `<img src="inc.png" class="c-icon">` : "";
     const label = special ? name : "";
 
@@ -315,3 +317,4 @@ document.getElementById("closeBtn").onclick = ()=>{
 </script>
 </body>
 </html>
+
