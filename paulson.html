@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>നിങ്ങൾ ഒന്നാമതാകാൻ ബാലറ്റിൽ രണ്ടാമതായി പോൾസൺ കൂവക്കൽ</title>
+<title>നിങ്ങൾ ഒന്നാമതാകാൻ ബാലറ്റിൽ രണ്ടാമതായി പോൾസൺ</title>
 
 <style>
   :root{
@@ -15,7 +15,7 @@
   }
 
   body{
-    font-family: "Segoe UI", sans-serif;
+    font-family:"Segoe UI",sans-serif;
     background:#f1f3f6;
     display:flex;
     justify-content:center;
@@ -35,156 +35,152 @@
 
   /* Header */
   .header{
-    background:#f7f7f7;
-    border-radius:10px;
-    padding:12px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:10px;
   }
+  .header .status{ display:flex; gap:8px; align-items:center; font-weight:600; }
 
   /* LED */
   .status-led{
-    width:12px;
-    height:12px;
+    width:12px; height:12px;
     border-radius:50%;
-    background:#d0d0d0;
-    margin-left:8px;
+    background:#ccc;
     transition:.2s;
   }
-  .status-led-green{
-    background:var(--led-green);
-    box-shadow:0 0 10px var(--led-green);
-  }
-  .status-led-red{
-    background:var(--led-red);
-    box-shadow:0 0 10px var(--led-red);
-  }
+  .status-led-green{ background:var(--led-green); box-shadow:0 0 10px var(--led-green); }
+  .status-led-red{ background:var(--led-red); box-shadow:0 0 10px var(--led-red); }
 
-  /* Voting grid */
+  /* Medium-pink GRID */
   .grid{
     border-radius:10px;
     border:1px solid #eee;
     overflow:hidden;
+    background:#ffb3d9 !important; /* YOUR REQUESTED MEDIUM PINK */
   }
+
   .row{
     display:grid;
     grid-template-columns:40px 1fr 36px 70px;
     padding:12px 8px;
-    border-bottom:1px solid #eee;
     align-items:center;
+    border-bottom:1px solid #f0a6ce;
   }
 
-  .serial{ text-align:center; font-weight:700; color:#666; }
-  .candidate{ font-weight:600; }
+  .serial{ text-align:center; font-weight:700; color:#444; }
+  .candidate{ font-weight:600; color:#222; }
 
-  .icon-cell{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
-  .c-icon{
-    width:28px;
-    height:28px;
-    object-fit:contain;
-  }
+  .icon-cell{ display:flex; justify-content:center; }
+  .c-icon{ width:28px; height:28px; object-fit:contain; }
 
-  /* Buttons */
-  .vote{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-  }
+  .vote{ display:flex; justify-content:flex-end; gap:10px; }
   .dot{
-    width:18px;
-    height:18px;
-    border-radius:50%;
+    width:18px; height:18px;
     background:var(--maroon-dot);
+    border-radius:50%;
   }
   .dot-red{
     background:var(--led-red) !important;
-    box-shadow:0 0 10px var(--led-red);
+    box-shadow:0 0 12px var(--led-red);
   }
   .btn{
-    width:58px;
-    height:34px;
-    border-radius:16px;
+    width:58px; height:34px;
     background:var(--blue-btn);
+    border-radius:16px;
     border:none;
     cursor:pointer;
   }
 
-  /* Person overlay (moved up) */
+  /* Person overlay */
   .person-overlay{
     position:absolute;
     left:50%;
     transform:translateX(-50%);
     bottom:-10px;
-    width:120px;
-    height:120px;
+    width:120px; height:120px;
     border-radius:999px;
     overflow:hidden;
     border:6px solid var(--glass);
-    background:#fff;
     box-shadow:0 10px 30px rgba(0,0,0,0.18);
   }
-  .person-overlay img{
-    width:100%; height:100%; object-fit:cover;
-  }
+  .person-overlay img{ width:100%; height:100%; object-fit:cover; }
 
-  /* Success Modal */
+  /* Success dialog */
   .success-overlay{
     position:fixed;
     left:50%; top:50%;
     transform:translate(-50%,-50%);
-    width:300px;
+    width:320px; max-width:92vw;
     background:white;
     border-radius:14px;
-    padding:22px;
-    text-align:center;
+    padding:18px;
     display:none;
-    box-shadow:0 30px 60px rgba(0,0,0,0.25);
+    text-align:center;
+    z-index:2000;
+    box-shadow:0 40px 90px rgba(0,0,0,0.32);
   }
+  .success-overlay.show{ display:block; }
 
-  .success-overlay.show{
-    display:block;
-  }
-
-  /* ZOOM-IN icon animation */
-  .success-icon{
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    background:#e9ffe9;
+  /* Poster container */
+  .success-poster{
+    width:100%;
     display:flex;
     justify-content:center;
-    align-items:center;
-    margin:0 auto 12px;
-    animation: zoomIn 0.45s cubic-bezier(.2,1.2,.4,1) forwards;
+    margin-bottom:12px;
+    perspective:900px;
   }
 
-  .success-icon img{
-    width:80px;
-    height:80px;
-    object-fit:contain;
+  /* Flip + glow poster card */
+  .poster-card{
+    width:100%;
+    max-width:280px;
+    border-radius:12px;
+    overflow:hidden;
+    transform-style:preserve-3d;
+    backface-visibility:hidden;
+    border:4px solid rgba(255,255,255,0.7);
+    background:white;
+    transform:rotateY(90deg);
+    opacity:0;
+  }
+  .poster-card img{
+    width:100%;
+    height:auto;
+    max-height:420px;
+    object-fit:contain; /* Full-fit (no cropping) */
   }
 
-  @keyframes zoomIn {
-    0% { transform:scale(0.1); opacity:0; }
-    70% { transform:scale(1.15); opacity:1; }
-    100% { transform:scale(1); opacity:1; }
+  .poster-card.flip-in{
+    animation:flipIn .64s cubic-bezier(.2,.9,.3,1) forwards;
+  }
+  .poster-card.glow{
+    animation:glowPulse 1.8s ease-in-out infinite;
   }
 
-  .primary, .ghost{
+  @keyframes flipIn{
+    0%{ transform:rotateY(90deg); opacity:0; }
+    55%{ transform:rotateY(-14deg) scale(1.02); opacity:1; }
+    80%{ transform:rotateY(6deg); }
+    100%{ transform:rotateY(0deg); opacity:1; }
+  }
+  @keyframes glowPulse{
+    0%{ box-shadow:0 12px 30px rgba(47,194,76,0.06),0 0 6px rgba(47,194,76,0.08); }
+    50%{ box-shadow:0 20px 60px rgba(47,194,76,0.12),0 0 20px rgba(47,194,76,0.18); }
+    100%{ box-shadow:0 12px 30px rgba(47,194,76,0.06),0 0 6px rgba(47,194,76,0.08); }
+  }
+
+  .title{ font-weight:800; margin-top:4px; color:#222; font-size:18px; }
+
+  .primary,.ghost{
     padding:10px 16px;
-    font-weight:700;
     border-radius:10px;
+    font-weight:700;
     cursor:pointer;
     margin:5px;
   }
-  .primary{ background:var(--blue-btn); color:#fff; border:none; }
-  .ghost{ background:white; border:1px solid #ccc; }
+  .primary{ background:var(--blue-btn); color:white; border:none; }
+  .ghost{ background:white; border:1px solid #ccc; color:var(--blue-btn); }
 
 </style>
 </head>
@@ -193,36 +189,37 @@
 
 <div class="container">
 
-  <div class="card">
+  <div class="card" id="mainCard">
 
     <div class="header">
-      Ready <div id="statusLed" class="status-led"></div>
-      <span style="font-weight:700;">Ballot Unit 1</span>
+      <div class="status">Ready <div id="statusLed" class="status-led"></div></div>
+      <div style="font-weight:700;">Ballot Unit 1</div>
     </div>
 
     <div class="grid" id="grid-ward"></div>
 
     <div class="person-overlay">
-      <img src="paulson.png">
+      <img src="paulson-min.png">
     </div>
 
   </div>
-
 </div>
 
-<!-- SUCCESS DIALOG -->
+
+<!-- Success Dialog -->
 <div class="success-overlay" id="successOverlay">
-  <div class="success-icon">
-    <img src="inc.png" />
+  <div class="success-poster" id="successPoster">
+    <img src="poster.png" alt="">
   </div>
-  <h3>You successfully voted</h3>
+
+  <div class="title">You successfully voted</div>
 
   <button class="primary" id="voteAgainBtn">Vote Again</button>
   <button class="ghost" id="closeBtn">Close</button>
 </div>
 
-<script>
 
+<script>
 /* AUDIO INIT */
 let audioCtx=null;
 function ensureAudioContext(){
@@ -230,22 +227,18 @@ function ensureAudioContext(){
   if(audioCtx.state==="suspended") audioCtx.resume();
   return audioCtx;
 }
-window.addEventListener("click", ensureAudioContext, { once:true });
+window.addEventListener("click",ensureAudioContext,{once:true});
 
-
-/* BUILD GRID: 9 rows, special row = 2 */
+/* BUILD GRID */
 function buildGrid(){
   const el=document.getElementById("grid-ward");
   el.innerHTML="";
-
-  const name="പോൾസൺ കൂവക്കൽ";
+  const name="പോൾസൺ";
   const specialRow=2;
 
   for(let i=1;i<=9;i++){
-    const special=i===specialRow;
-    const icon=special ? `<img src="inc.png" class="c-icon">` : "";
-    const label=special ? name : "";
-
+    const label=i===specialRow?name:"";
+    const icon=i===specialRow?`<img src="inc.png" class="c-icon">`:"";
     el.innerHTML += `
       <div class="row" data-index="${i}">
         <div class="serial">${i}</div>
@@ -261,39 +254,66 @@ function buildGrid(){
 }
 buildGrid();
 
-
-/* BEEP SOUND */
+/* BUZZER */
 function beep(){
   try{
     const ctx=ensureAudioContext();
     const o=ctx.createOscillator();
     const g=ctx.createGain();
-    o.type="square";
-    o.frequency.value=520;
+    o.type="square"; o.frequency.value=520;
     g.gain.value=0.15;
     o.connect(g).connect(ctx.destination);
-    o.start();
-    setTimeout(()=>o.stop(),500);
+    o.start(); setTimeout(()=>o.stop(),500);
   }catch(e){}
 }
 
 const grid=document.getElementById("grid-ward");
 const statusLed=document.getElementById("statusLed");
 const modal=document.getElementById("successOverlay");
-
 statusLed.classList.add("status-led-green");
 
-function resetEVM(){
+
+/* RESET */
+function resetVEM(){
   grid.querySelectorAll(".dot-red").forEach(d=>d.classList.remove("dot-red"));
   statusLed.classList.remove("status-led-red");
   statusLed.classList.add("status-led-green");
 }
 
-function showSuccess(){ modal.classList.add("show"); }
-function hideSuccess(){ modal.classList.remove("show"); }
+
+/* POSTER Flip + Glow Animation */
+function animatePoster(){
+  const wrap=document.getElementById("successPoster");
+  let card=wrap.querySelector(".poster-card");
+  const img=wrap.querySelector("img");
+
+  if(!card){
+    card=document.createElement("div");
+    card.className="poster-card";
+    card.appendChild(img);
+    wrap.innerHTML="";
+    wrap.appendChild(card);
+  }
+
+  card.classList.remove("flip-in","glow");
+  void card.offsetWidth; // reflow
+  setTimeout(()=>{ card.classList.add("flip-in"); setTimeout(()=>card.classList.add("glow"),220); },40);
+}
 
 
-/* VOTING LOGIC */
+/* SHOW SUCCESS */
+function showSuccess(){
+  modal.classList.add("show");
+  animatePoster();
+}
+
+/* HIDE SUCCESS */
+function hideSuccess(){
+  modal.classList.remove("show");
+}
+
+
+/* VOTING */
 grid.addEventListener("click", e=>{
   const btn=e.target.closest(".btn");
   if(!btn) return;
@@ -310,24 +330,18 @@ grid.addEventListener("click", e=>{
     statusLed.classList.remove("status-led-green");
     statusLed.classList.add("status-led-red");
 
-    /* dialog after 1s delay */
-    setTimeout(showSuccess, 1000);
+    setTimeout(showSuccess,1000);
 
-  }, 520);
+  },520);
 });
 
 
-/* BUTTONS (RESET BOTH) */
-document.getElementById("voteAgainBtn").onclick=()=>{
-  hideSuccess();
-  resetEVM();
-};
-document.getElementById("closeBtn").onclick=()=>{
-  hideSuccess();
-  resetEVM();
-};
+/* BUTTONS */
+document.getElementById("voteAgainBtn").onclick=()=>{ hideSuccess(); resetVEM(); };
+document.getElementById("closeBtn").onclick=()=>{ hideSuccess(); resetVEM(); };
 
 </script>
+
 </body>
 </html>
 
